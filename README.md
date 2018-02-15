@@ -1,5 +1,8 @@
 Simple Calculator application
 
+Dependencies:
+- Java 8
+
 Compile:
 ```
 ./gradlew jar
