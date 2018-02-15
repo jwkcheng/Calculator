@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.google.common.primitives.Ints;
 
+import net.jeremycheng.Calculator.InvalidInputException;
 import net.jeremycheng.Calculator.Memory;
 
 public interface Operation
@@ -11,13 +12,13 @@ public interface Operation
 
 	public abstract int getNumParameters();
 
-	public abstract int evaluate();
+	public abstract int evaluate() throws InvalidInputException;
 
 	public abstract void setArguments(List<Object> arguments);
 
 	public abstract List<Object> getArguments();
 
-	public default int getArgumentValue(int index)
+	public default int getArgumentValue(int index) throws InvalidInputException
 	{
 		Object argument = getArguments().get(index);
 
@@ -40,16 +41,4 @@ public interface Operation
 			}
 		}
 	}
-	// public static Integer getIntegerValue(String argument)
-	// {
-	// Integers
-	// try
-	// {
-	// return new Integer(argument);
-	// } catch (NumberFormatException ex)
-	// {
-	// // We only care if it is an integer at this point.
-	// return null;
-	// }
-	// }
 }

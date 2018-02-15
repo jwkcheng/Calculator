@@ -13,17 +13,23 @@ import net.jeremycheng.Calculator.Operation.OperationFactory;
 public class Calculator
 {
 
-	// private static final Pattern EXPRESSION_PATTERN = Pattern
-	// .compile("^([0-9]+)$|^*([a-zA-Z_][a-zA-Z0-9_]+)$|^\\s*(?<oper>[a-zA-Z]+)\\s*\\((?<args>.*)\\)\\s*$");
+	private static final Pattern EXPRESSION_PATTERN = Pattern
+			.compile("^([+-]*[0-9]+)$|^([a-zA-Z_][a-zA-Z0-9_]*)$|^\\s*(?<oper>[a-zA-Z]+)\\s*\\((?<args>.*)\\)\\s*$");
 
 	private static final Pattern OPERATION_PATTERN = Pattern
 			.compile("^\\s*(?<oper>[a-zA-Z]+)\\s*\\((?<args>.*)\\)\\s*$");
 
-	public int evaluate(String input)
+	/**
+	 * 
+	 * @param inputExpression
+	 * @return given an inputExpression, evaluate and return the calculated integer
+	 *         value;
+	 * @throws InvalidInputException
+	 */
+	public int evaluate(String inputExpression) throws InvalidInputException
 	{
 		Integer value;
-		Object result = evaluateExpression(input);
-		// Integer value = Ints.tryParse(string)(result);
+		Object result = evaluateExpression(inputExpression);
 		if (result instanceof Operation)
 		{
 			value = ((Operation) result).evaluate();
@@ -43,46 +49,63 @@ public class Calculator
 	/**
 	 * 
 	 * @param input
-	 * @return the input if it is an integer, else return the expression evaluated
+	 * @return Return the variable value if it currently exists in memory, the
+	 *         expression evaluated to an Operation object, else the input as is.
+	 * @throws InvalidInputException
 	 */
-	private Object evaluateExpression(String input)
+	private Object evaluateExpression(String input) throws InvalidInputException
 	{
 		String sanitized = input.trim();
-		// Optional<Integer> result = isInteger(sanitized);
-		// if (result.isPresent())
-		// {
-		// return result.get();
-		// }
+		verifyValidExpression(sanitized);
 
 		Matcher matcher = OPERATION_PATTERN.matcher(sanitized);
 		if (matcher.matches())
 		{
-
-			String argsString = matcher.group("args");
-			String operationString = matcher.group("oper");
-			return parseOperation(argsString, operationString);
+			return parseOperation(matcher.group("oper"), matcher.group("args"));
 		} else if (Memory.getInstance().contains(sanitized))
 		{
+			// If we have the variable in memory at this point we can just return it.
 			return String.valueOf(Memory.getInstance().get(sanitized));
 		} else
 		{
 			return sanitized;
 		}
-		// throw new IllegalArgumentException("Error, shouldn't reach this");
 	}
 
-	private Operation parseOperation(String argsString, String operationString)
+	/**
+	 * 
+	 * @param expressionString
+	 * @throws InvalidInputException
+	 *             if expressionString is not a valid expression string.
+	 */
+	private void verifyValidExpression(String expressionString) throws InvalidInputException
+	{
+		Matcher matcher = EXPRESSION_PATTERN.matcher(expressionString);
+		if (!matcher.matches())
+		{
+			throw new InvalidInputException("Invalid expression found: '" + expressionString + "'");
+		}
+
+	}
+
+	private Operation parseOperation(String operationString, String argsString) throws InvalidInputException
 	{
 		Operation currOperation = OperationFactory.getOperation(operationString);
 
 		if (currOperation != null)
 		{
-			currOperation.setArguments(evaluateArguments(currOperation, parseArguments(argsString)));
+			currOperation.setArguments(evaluateNestedOperations(parseArguments(argsString)));
 			return currOperation;
 		} else
-			throw new IllegalArgumentException();
+			throw new InvalidInputException("Input appears to have an operation format, but invalid operation found.");
 	}
 
+	/**
+	 * 
+	 * @param argsString
+	 * @return A list of strings representing the arguments of the current (top)
+	 *         level Operation.
+	 */
 	private List<String> parseArguments(String argsString)
 	{
 		List<String> argList = new ArrayList<>();
@@ -122,12 +145,17 @@ public class Calculator
 		return argList;
 	}
 
-	private List<Object> evaluateArguments(Operation operation, List<String> parameters)
+	/**
+	 * Recursive Method to look for nested Operations in the list of string
+	 * parameters.
+	 * 
+	 * @param parameters
+	 * @return An object list representation of String parameters (values and
+	 *         variables) and nested Operation objects.
+	 * @throws InvalidInputException
+	 */
+	private List<Object> evaluateNestedOperations(List<String> parameters) throws InvalidInputException
 	{
-		if (parameters.size() != operation.getNumParameters())
-		{
-			throw new IllegalArgumentException("Invalid number of arguments for operation");
-		}
 		List<Object> arguments = new ArrayList<>();
 		for (String currParam : parameters)
 		{
@@ -135,20 +163,6 @@ public class Calculator
 		}
 
 		return arguments;
-		// return operation.calculate(arguments.toArray(new Object[arguments.size()]));
-	}
-
-	private static Integer isInteger(String s)
-	{
-		try
-		{
-			return new Integer(s);
-		} catch (NumberFormatException ex)
-		{
-			// We only care if it is an integer at this point.
-			return null;
-		}
-
 	}
 
 }

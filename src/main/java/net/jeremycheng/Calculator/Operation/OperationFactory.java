@@ -1,32 +1,42 @@
 package net.jeremycheng.Calculator.Operation;
 
-public class OperationFactory {
+import com.google.common.base.Enums;
+import com.google.common.base.Optional;
 
-	public enum OperationType {
+import net.jeremycheng.Calculator.InvalidInputException;
+
+public class OperationFactory
+{
+
+	public enum OperationType
+	{
 		ADD, SUB, DIV, MUL, LET
 	}
 
-	public enum specialOperation {
-		LET
+	public static Operation getOperation(String operationStr) throws InvalidInputException
+	{
+		Optional<OperationType> operationType = Enums.getIfPresent(OperationType.class, operationStr.toUpperCase());
+		if (operationType.isPresent())
+		{
+			// OperationType operationType =
+			// OperationType.valueOf(operationStr.toUpperCase());
+			switch (operationType.get())
+			{
+			case ADD:
+				return new AddOperation();
+			case SUB:
+				return new SubOperation();
+			case MUL:
+				return new MulOperation();
+			case DIV:
+				return new DivOperation();
+			case LET:
+				return new LetOperation();
+			default:
+				return null;
+			}
+		}
+		throw new InvalidInputException("Invalid Operation found: " + operationStr);
 	}
 
-	public static Operation getOperation(String operationStr) {
-		OperationType operationType = OperationType.valueOf(operationStr.toUpperCase());
-		switch (operationType) {
-		case ADD:
-			return new AddOperation();
-		case SUB:
-			return new SubOperation();
-		case MUL:
-			return new MulOperation();
-		case DIV:
-			return new DivOperation();
-		case LET:
-			return new LetOperation();
-		default:
-			return null;
-		}
-	}
-	
-	
 }

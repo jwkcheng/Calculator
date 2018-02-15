@@ -1,5 +1,6 @@
 package net.jeremycheng.Calculator.Operation;
 
+import net.jeremycheng.Calculator.InvalidInputException;
 import net.jeremycheng.Calculator.Memory;
 
 public class LetOperation extends AbstractOperation
@@ -17,7 +18,7 @@ public class LetOperation extends AbstractOperation
 	}
 
 	@Override
-	public int evaluate()
+	public int evaluate() throws InvalidInputException
 	{
 		if (arguments.size() != NUM_PARAMETERS)
 		{

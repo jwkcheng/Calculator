@@ -1,5 +1,7 @@
 package net.jeremycheng.Calculator.Operation;
 
+import net.jeremycheng.Calculator.InvalidInputException;
+
 public abstract class AbstractBinaryOperation extends AbstractOperation
 {
 
@@ -10,14 +12,14 @@ public abstract class AbstractBinaryOperation extends AbstractOperation
 		return NUM_PARAMETERS;
 	}
 
-	protected abstract int calculate(int left, int right);
+	protected abstract int calculate(int left, int right) throws InvalidInputException;
 
 	@Override
-	public int evaluate()
+	public int evaluate() throws InvalidInputException
 	{
 		if (arguments.size() != 2)
 		{
-			throw new IllegalArgumentException("Invalid number of arguments for operation");
+			throw new InvalidInputException("Invalid number of arguments for operation");
 		}
 		return calculate(getArgumentValue(0), getArgumentValue(1));
 	}
