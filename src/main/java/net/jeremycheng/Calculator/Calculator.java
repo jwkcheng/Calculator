@@ -42,7 +42,6 @@ public class Calculator
 				value = Memory.getInstance().get(resultString);
 			}
 		}
-		Memory.getInstance().clear();
 		return value;
 	}
 
@@ -88,6 +87,16 @@ public class Calculator
 
 	}
 
+	/**
+	 * 
+	 * @param operationString
+	 *            the operation portion of a valid operation expression
+	 * @param argsString
+	 *            the comma separated string of arguments in a valid operation
+	 *            expression
+	 * @return an Operation object representation of the operation expression
+	 * @throws InvalidInputException
+	 */
 	private Operation parseOperation(String operationString, String argsString) throws InvalidInputException
 	{
 		Operation currOperation = OperationFactory.getOperation(operationString);

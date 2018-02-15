@@ -22,17 +22,22 @@ public class LetOperation extends AbstractOperation
 	{
 		if (arguments.size() != NUM_PARAMETERS)
 		{
-			throw new IllegalArgumentException("Invalid number of arguments for operation");
+			throw new InvalidInputException("Invalid number of arguments for operation");
 		}
 		String first = ((String) arguments.get(0)).trim();
 		if (!first.matches(VALID_VARIABLE_REGEX))
 		{
-			throw new IllegalArgumentException("Invalid variable name: " + first + " for LET operation");
+			throw new InvalidInputException("Invalid variable name: " + first + " for LET operation");
 		}
 
+		if (Memory.getInstance().contains(first))
+		{
+			throw new InvalidInputException("Variable: " + first + " alread used");
+		}
 		Memory.getInstance().put(first, getArgumentValue(1));
-
-		return getArgumentValue(2);
+		int resultValue = getArgumentValue(2);
+		Memory.getInstance().remove(first);
+		return resultValue;
 
 	}
 

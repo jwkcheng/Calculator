@@ -17,7 +17,6 @@ public class App
 
 	public void go()
 	{
-
 		try (Scanner scanner = new Scanner(System.in))
 		{
 			while (true)

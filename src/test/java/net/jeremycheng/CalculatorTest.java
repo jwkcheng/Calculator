@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import net.jeremycheng.Calculator.Calculator;
 import net.jeremycheng.Calculator.InvalidInputException;
+import net.jeremycheng.Calculator.Memory;
 
 public class CalculatorTest
 {
@@ -23,48 +24,13 @@ public class CalculatorTest
 	@After
 	public void tearDown() throws Exception
 	{
+		Memory.getInstance().clear();
 	}
 
 	@Test
-	public void testEvaluateExpressionAdd() throws InvalidInputException
+	public void testEvaluateExpressionSimple() throws InvalidInputException
 	{
 		assertEquals(7, calculator.evaluate("add(4,3)"));
-	}
-
-	@Test
-	public void testEvaluateExpressionAddNegative() throws InvalidInputException
-	{
-		assertEquals(-7, calculator.evaluate("add(-4,-3)"));
-	}
-
-	@Test
-	public void testEvaluateExpressionSub() throws InvalidInputException
-	{
-		assertEquals(1, calculator.evaluate("sub(4,3)"));
-	}
-
-	@Test
-	public void testEvaluateExpressionSubNegative() throws InvalidInputException
-	{
-		assertEquals(30111, calculator.evaluate("sub(111,-30000)"));
-	}
-
-	@Test
-	public void testEvaluateExpressionMul() throws InvalidInputException
-	{
-		assertEquals(12, calculator.evaluate("mul(4,3)"));
-	}
-
-	@Test
-	public void testEvaluateExpressionDivWithRounding() throws InvalidInputException
-	{
-		assertEquals(1, calculator.evaluate("div(4,3)"));
-	}
-
-	@Test
-	public void testEvaluateExpressionDivNoRounding() throws InvalidInputException
-	{
-		assertEquals(4, calculator.evaluate("div(12,3)"));
 	}
 
 	@Test
@@ -95,24 +61,6 @@ public class CalculatorTest
 	public void testEvaluateExpressionRandomValidWhitespace() throws InvalidInputException
 	{
 		assertEquals(13, calculator.evaluate("  add (sub(  47, 46  ), mul(2, mul(2, 3) ) )   "));
-	}
-
-	@Test
-	public void testLetSimple() throws InvalidInputException
-	{
-		assertEquals(10, calculator.evaluate("let(a,5,add(a,a))"));
-	}
-
-	@Test
-	public void testLetChained1() throws InvalidInputException
-	{
-		assertEquals(55, calculator.evaluate("let(a, 5, let(b, mul(a, 10), add(b, a))) "));
-	}
-
-	@Test
-	public void testLetChained2() throws InvalidInputException
-	{
-		assertEquals(40, calculator.evaluate("let(a, let(b, 10, add(b, b)), let(b, 20, add(a, b)))"));
 	}
 
 	@Test(expected = InvalidInputException.class)

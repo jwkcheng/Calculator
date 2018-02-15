@@ -18,8 +18,6 @@ public class OperationFactory
 		Optional<OperationType> operationType = Enums.getIfPresent(OperationType.class, operationStr.toUpperCase());
 		if (operationType.isPresent())
 		{
-			// OperationType operationType =
-			// OperationType.valueOf(operationStr.toUpperCase());
 			switch (operationType.get())
 			{
 			case ADD:
